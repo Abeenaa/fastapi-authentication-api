@@ -1,0 +1,97 @@
+Fluentian Internship Programme
+Task No. : 2
+Task Round : 1
+Backend Task - Authentication API (FastAPI)
+Task Title : Build Authentication System for a Mobile/Web App
+Objective
+Create a backend authentication system that allows frontend and mobile developers to build a
+complete auth flow (register, login, verify, manage account).
+Context
+Frontend and mobile developers will use your API to:
+* Register users
+* Log in users
+* Verify accounts
+* Fetch user data
+* Delete accounts
+Your API should be clear, reliable, and easy to integrate.
+Requirements (Core)
+Build the following endpoints using FastAPI and SQLite:
+1. Register
+* POST /register
+* Input:
+* name
+* email
+* password
+* Behavior:
+* Store user in database
+* Hash password (do NOT store plain text)
+* Return success message
+2. Login
+* POST /login
+* Input:
+* email
+* password
+* Behavior:
+* Validate credentials
+* Return JWT token
+3. Get Current User
+* GET /me
+* Requires authentication (JWT)
+* Returns:
+* user id
+* name
+* email
+4. Delete Account
+* DELETE /delete-account
+* Requires authentication
+* Deletes the logged-in user5. Email Verification (Simple Simulation)
+* POST /send-code
+* Generate a 6-digit code
+* Store it temporarily
+* POST /verify
+* Input: email + code
+* Validate code
+* Mark user as verified
+Technical Constraints
+* Use FastAPI
+* Use SQLite as the database
+* Use JWT authentication
+* Passwords must be hashed
+* Code must be modular (separate files for models, routes, etc.)
+Expected Behavior
+* Proper error handling:
+* Invalid credentials
+* User not found
+* Invalid token
+* Clean JSON responses
+* Use HTTP status codes correctly
+Freedom Section
+You are free to:
+* Design your database schema
+* Add extra fields if needed
+* Improve response structure
+* Add additional endpoints if useful
+Deliverables
+Submit:
+* GitHub repository
+* Live Link (Vercel or other free services are acceptable)
+* README file including:
+* How to run the project
+* API documentation (endpoints + examples)
+Evaluation Criteria
+* Functionality (does everything work)
+* Code structure (clean, modular)
+* Security basics (hashing, auth)
+* API design (clear and usable)
+* Error handling
+Bonus (Optional)
+* Add refresh tokens
+* Add rate limiting
+* Add logging
+* Add Docker setup
+Deadline
+6 days
+Important Note
+ Your API will be used by frontend and mobile developers.
+ Design it as if other engineers depend on it.
+ Avoid hardcoding, shortcuts, or incomplete implementations.
