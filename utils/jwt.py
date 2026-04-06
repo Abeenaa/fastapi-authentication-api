@@ -1,23 +1,60 @@
 import os
 from datetime import datetime, timedelta, timezone
+from uuid import uuid4
+
 from dotenv import load_dotenv
-from jose import jwt
+from jose import jwt, JWTError
 
-load_dotenv()  # reads .env file
+load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY")  
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY is not set in environment variables")
+
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
+ACCESS_TOKEN_EXPIRE_MINUTES = 15
+REFRESH_TOKEN_EXPIRE_DAYS = 7
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
+
+def _create_token(data: dict, expires_delta: timedelta) -> str:
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + (
-        expires_delta if expires_delta else timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    )
-    to_encode.update({"exp": expire})
+    now = datetime.now(timezone.utc)
+    expire = now + expires_delta
+    to_encode.update({"exp": expire, "iat": now, "jti": str(uuid4())})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-def decode_access_token(token: str) -> dict:
+def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
+    token_data = data.copy()
+    token_data["type"] = "access"
+    return _create_token(
+        token_data,
+        expires_delta if expires_delta else timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
+    )
+
+
+def create_refresh_token(data: dict, expires_delta: timedelta | None = None) -> str:
+    token_data = data.copy()
+    token_data["type"] = "refresh"
+    return _create_token(
+        token_data,
+        expires_delta if expires_delta else timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
+    )
+
+
+def decode_token(token: str) -> dict:
     return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
+
+def decode_access_token(token: str) -> dict:
+    payload = decode_token(token)
+    if payload.get("type") != "access":
+        raise JWTError("Invalid token type")
+    return payload
+
+
+def decode_refresh_token(token: str) -> dict:
+    payload = decode_token(token)
+    if payload.get("type") != "refresh":
+        raise JWTError("Invalid token type")
+    return payload
