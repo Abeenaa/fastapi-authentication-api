@@ -40,6 +40,16 @@ if not logging.getLogger().handlers:
 	logging.basicConfig(level=logging.INFO)
 
 
+@app.get("/")
+def root():
+	return {"message": "FastAPI Authentication API is running", "docs": "/docs"}
+
+
+@app.get("/health")
+def health_check():
+	return {"status": "ok"}
+
+
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
 	request_id = str(uuid.uuid4())
